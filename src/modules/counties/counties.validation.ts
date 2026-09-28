@@ -1,0 +1,15 @@
+import * as z from "zod";
+
+export const createCountySchema = z.object({
+  slug: z.string(),
+  code: z.string(),
+  name: z.string(),
+  svgPath: z.string(),
+  viewBox: z.string(),
+  labelX: z.number().gte(0).lte(900),
+  labelY: z.number().gte(0).lte(665),
+});
+
+export const getCountySchema = z.object({
+  countyId: z.coerce.number().int().gt(0),
+});
