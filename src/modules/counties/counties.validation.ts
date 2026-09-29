@@ -13,3 +13,9 @@ export const createCountySchema = z.object({
 export const getCountySchema = z.object({
   countyId: z.coerce.number().int().gt(0),
 });
+
+export const updateCountySchema = createCountySchema
+  .partial()
+  .refine((data) => Object.keys(data).length > 0, {
+    message: "Provide at least one field to update",
+  });

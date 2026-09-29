@@ -1,6 +1,10 @@
 import type { Request, Response } from "express";
 import * as countiesService from "./counties.service.ts";
-import { createCountySchema, getCountySchema } from "./counties.validation.ts";
+import {
+  createCountySchema,
+  getCountySchema,
+  updateCountySchema,
+} from "./counties.validation.ts";
 import { getValidationError, COUNTY_NOT_FOUND } from "./counties.errors.ts";
 
 export async function getAllCounties(
@@ -33,10 +37,37 @@ export async function getCounty(req: Request, res: Response): Promise<void> {
   res.status(200).json({ county });
 }
 
-export function updateCounty(req: Request, res: Response): void {}
+export async function updateCounty(req: Request, res: Response): Promise<void> {
+  const reqParams = getCountySchema.safeParse(req.params);
+  const reqBody = updateCountySchema.safeParse(req.body);
+
+  if (!reqParams.success) {
+    res.status(400).json({
+      error: getValidationError(reqParams?.error),
+    });
+    return;
+  }
+
+  if (!reqBody.success) {
+    res.status(400).json({
+      error: getValidationError(reqBody?.error),
+    });
+    return;
+  }
+
+  res
+    .status(200)
+    .json(
+      await countiesService.updateCounty(
+        reqParams?.data?.countyId,
+        reqBody.data,
+      ),
+    );
+}
 
 export async function createCounty(req: Request, res: Response): Promise<void> {
   const reqBody = createCountySchema.safeParse(req.body);
+
   if (!reqBody.success) {
     res.status(400).json({
       error: getValidationError(reqBody.error),
@@ -47,4 +78,19 @@ export async function createCounty(req: Request, res: Response): Promise<void> {
   const county = await countiesService.createCounty(reqBody.data);
 
   res.status(201).json({ county });
+}
+
+export async function deleteCounty(req: Request, res: Response): Promise<void> {
+  const reqParams = getCountySchema.safeParse(req.params);
+
+  if (!reqParams.success) {
+    res.status(400).json({
+      error: getValidationError(reqParams.error),
+    });
+    return;
+  }
+
+  res
+    .status(200)
+    .json(await countiesService.deleteCounty(reqParams?.data?.countyId));
 }

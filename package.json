@@ -13,7 +13,8 @@
     "dbinit": "node scripts/dbinit.ts",
     "migrate": "npx prisma migrate dev",
     "migrate:create": "npx prisma migrate dev",
-    "migrate:generate": "npx prisma generate"
+    "migrate:generate": "npx prisma generate",
+    "tsc": "npx tsc --noEmit"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.10.0",

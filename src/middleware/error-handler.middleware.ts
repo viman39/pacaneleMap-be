@@ -1,6 +1,9 @@
 import type { NextFunction, Request, Response } from "express";
 
-import { CountyAlreadyExistsError } from "../modules/counties/counties.errors.ts";
+import {
+  CountyAlreadyExistsError,
+  CountyNotFoundError,
+} from "../modules/counties/counties.errors.ts";
 
 export function errorHandler(
   error: unknown,
@@ -17,6 +20,16 @@ export function errorHandler(
     res.status(409).json({
       error: {
         code: "COUNTY_ALREADY_EXISTS",
+        message: error.message,
+      },
+    });
+    return;
+  }
+
+  if (error instanceof CountyNotFoundError) {
+    res.status(400).json({
+      error: {
+        code: "COUNTY_NOT_FOUND",
         message: error.message,
       },
     });

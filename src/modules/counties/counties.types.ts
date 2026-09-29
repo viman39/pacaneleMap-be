@@ -1,5 +1,8 @@
 import * as z from "zod";
-import type { createCountySchema } from "./counties.validation.ts";
+import type {
+  createCountySchema,
+  updateCountySchema,
+} from "./counties.validation.ts";
 
 export type County = {
   id: number;
@@ -10,6 +13,10 @@ export type County = {
   viewBox: string;
   labelX: number;
   labelY: number;
+  deleted: boolean;
 };
 
 export type CreateCountyInput = z.infer<typeof createCountySchema>;
+export type UpdateCountyInput = z.infer<typeof updateCountySchema> & {
+  deleted?: boolean;
+};

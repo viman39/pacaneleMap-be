@@ -7,6 +7,13 @@ export class CountyAlreadyExistsError extends Error {
   }
 }
 
+export class CountyNotFoundError extends Error {
+  constructor() {
+    super("County not found");
+    this.name = "CountyNotFoundError";
+  }
+}
+
 export const getValidationError = (error: ZodError) => ({
   code: "VALIDATION_ERROR",
   message: "Invalid req body",

@@ -1,7 +1,10 @@
 import { prisma } from "../../db/prisma.ts";
 import { Prisma } from "../../generated/prisma/client.ts";
-import { CountyAlreadyExistsError } from "./counties.errors.ts";
-import type { CreateCountyInput } from "./counties.types.ts";
+import {
+  CountyAlreadyExistsError,
+  CountyNotFoundError,
+} from "./counties.errors.ts";
+import type { CreateCountyInput, UpdateCountyInput } from "./counties.types.ts";
 
 export async function insertCounty(input: CreateCountyInput) {
   try {
@@ -52,4 +55,29 @@ export async function getCountyById(id: number) {
       deleted: false,
     },
   });
+}
+
+export async function updateCounty(id: number, data: UpdateCountyInput) {
+  try {
+    return await prisma.county.update({
+      where: {
+        id,
+        deleted: false,
+      },
+      data: {
+        ...data,
+      },
+    });
+  } catch (e) {
+    if (e instanceof Prisma.PrismaClientKnownRequestError) {
+      if (e.code === "P2025") {
+        throw new CountyNotFoundError();
+      }
+      if (e.code === "P2002") {
+        throw new CountyAlreadyExistsError();
+      }
+    }
+
+    throw e;
+  }
 }
