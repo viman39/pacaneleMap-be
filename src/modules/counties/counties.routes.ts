@@ -10,7 +10,7 @@ import {
 export const countiesRouter = Router();
 
 countiesRouter.get("/", getAllCounties);
-countiesRouter.post("/", createCounty);
 countiesRouter.get("/:countyId", getCounty);
+countiesRouter.post("/", createCounty);
 countiesRouter.patch("/:countyId", updateCounty);
 countiesRouter.delete("/:countyId", deleteCounty);

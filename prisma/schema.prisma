@@ -31,5 +31,30 @@ model County {
 
   deleted Boolean @default(false)
 
+  uats UAT[]
+
   @@map("counties")
+}
+
+model UAT {
+  id        Int    @id @default(autoincrement())
+  countyId  Int    @map("county_id")
+  county    County @relation(fields: [countyId], references: [id], onDelete: Restrict)
+  name      String
+  siruta    Int    @unique
+
+  svgPath   String @map("svg_path") @db.Text
+
+  isResidence   Boolean @default(false) @map("is_residence")
+  slotsStatus   Int? @map("slots_status")
+  population    Int?
+  hallMail      String? @map("hall_mail")
+  petitionLink  String? @map("petition_link")
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  deleted Boolean @default(false)
+
+  @@map("uats")
 }

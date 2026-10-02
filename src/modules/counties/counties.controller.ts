@@ -5,7 +5,8 @@ import {
   getCountySchema,
   updateCountySchema,
 } from "./counties.validation.ts";
-import { getValidationError, COUNTY_NOT_FOUND } from "./counties.errors.ts";
+import { COUNTY_NOT_FOUND } from "./counties.errors.ts";
+import { getValidationError } from "../../utils/error.utils.ts";
 
 export async function getAllCounties(
   _req: Request,

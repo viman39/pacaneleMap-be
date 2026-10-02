@@ -4,6 +4,10 @@ import {
   CountyAlreadyExistsError,
   CountyNotFoundError,
 } from "../modules/counties/counties.errors.ts";
+import {
+  UatAlreadyExistsError,
+  UatNotFoundError,
+} from "../modules/uats/uats.errors.ts";
 
 export function errorHandler(
   error: unknown,
@@ -20,6 +24,36 @@ export function errorHandler(
     res.status(409).json({
       error: {
         code: "COUNTY_ALREADY_EXISTS",
+        message: error.message,
+      },
+    });
+    return;
+  }
+
+  if (error instanceof CountyNotFoundError) {
+    res.status(404).json({
+      error: {
+        code: "COUNTY_NOT_FOUND",
+        message: error.message,
+      },
+    });
+    return;
+  }
+
+  if (error instanceof UatNotFoundError) {
+    res.status(404).json({
+      error: {
+        code: "UAT_NOT_FOUND",
+        message: error.message,
+      },
+    });
+    return;
+  }
+
+  if (error instanceof UatAlreadyExistsError) {
+    res.status(409).json({
+      error: {
+        code: "UAT_ALREADY_EXISTS",
         message: error.message,
       },
     });
