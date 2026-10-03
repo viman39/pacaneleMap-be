@@ -12,7 +12,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dbinit": "node scripts/dbinit.ts",
     "migrate": "npx prisma migrate dev",
-    "migrate:create": "npx prisma migrate dev",
+    "migrate:create": "npx prisma migrate dev --create-only",
     "migrate:generate": "npx prisma generate",
     "tsc": "npx tsc --noEmit"
   },

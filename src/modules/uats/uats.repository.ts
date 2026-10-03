@@ -17,6 +17,17 @@ export async function getAllByCountyId(countyId: number) {
       countyId: countyId,
       deleted: false,
     },
+    select: {
+      id: true,
+      name: true,
+      siruta: true,
+      svgPath: true,
+      isResidence: true,
+      slotsStatus: true,
+      population: true,
+      hallMail: true,
+      petitionLink: true,
+    },
   });
 }
 

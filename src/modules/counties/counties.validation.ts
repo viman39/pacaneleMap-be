@@ -6,8 +6,8 @@ export const createCountySchema = z.object({
   name: z.string(),
   svgPath: z.string(),
   viewBox: z.string(),
-  labelX: z.number().gte(0).lte(900),
-  labelY: z.number().gte(0).lte(665),
+  codeX: z.number().gte(0).lte(900),
+  codeY: z.number().gte(0).lte(665),
 });
 
 export const getCountySchema = z.object({

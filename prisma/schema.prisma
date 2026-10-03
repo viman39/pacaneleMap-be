@@ -23,8 +23,8 @@ model County {
 
   svgPath String @map("svg_path") @db.Text
   viewBox String @map("view_box")
-  labelX  Float  @map("label_x")
-  labelY  Float  @map("label_y")
+  codeX  Float  @map("code_x")
+  codeY  Float  @map("code_y")
 
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
   updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
@@ -45,7 +45,7 @@ model UAT {
 
   svgPath   String @map("svg_path") @db.Text
 
-  isResidence   Boolean @default(false) @map("is_residence")
+  isResidence   Boolean? @default(false) @map("is_residence")
   slotsStatus   Int? @map("slots_status")
   population    Int?
   hallMail      String? @map("hall_mail")

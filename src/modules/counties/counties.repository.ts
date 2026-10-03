@@ -1,5 +1,5 @@
 import { prisma } from "../../db/prisma.ts";
-import { Prisma } from "../../generated/prisma/client.ts";
+import { Prisma, type County } from "../../generated/prisma/client.ts";
 import {
   CountyAlreadyExistsError,
   CountyNotFoundError,
@@ -15,8 +15,8 @@ export async function insertCounty(input: CreateCountyInput) {
         name: input.name,
         svgPath: input.svgPath,
         viewBox: input.viewBox,
-        labelX: input.labelX,
-        labelY: input.labelY,
+        codeX: input.codeX,
+        codeY: input.codeY,
       },
     });
   } catch (e: unknown) {
@@ -31,19 +31,29 @@ export async function insertCounty(input: CreateCountyInput) {
   }
 }
 
-export async function getCountyByName(countyName: string) {
-  return await prisma.county.findFirst({
-    where: {
-      name: countyName,
-      deleted: false,
-    },
-  });
-}
-
 export async function getAllCounties() {
   return await prisma.county.findMany({
     where: {
       deleted: false,
+    },
+    select: {
+      id: true,
+      slug: true,
+      code: true,
+      name: true,
+      svgPath: true,
+      viewBox: true,
+      codeX: true,
+      codeY: true,
+      _count: {
+        select: {
+          uats: {
+            where: {
+              deleted: false,
+            },
+          },
+        },
+      },
     },
   });
 }
@@ -53,6 +63,25 @@ export async function getCountyById(id: number) {
     where: {
       id: id,
       deleted: false,
+    },
+    select: {
+      id: true,
+      slug: true,
+      code: true,
+      name: true,
+      svgPath: true,
+      viewBox: true,
+      codeX: true,
+      codeY: true,
+      _count: {
+        select: {
+          uats: {
+            where: {
+              deleted: false,
+            },
+          },
+        },
+      },
     },
   });
 }
