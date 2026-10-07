@@ -4,11 +4,20 @@ import { notFoundHandler } from "./middleware/not-found.middleware.ts";
 import { countiesRouter } from "./modules/counties/counties.routes.ts";
 import { uatsRouter } from "./modules/uats/uats.routes.ts";
 import { errorHandler } from "./middleware/error-handler.middleware.ts";
+import cors from "cors";
+import { authRouter } from "./modules/auth/auth.routes.ts";
 
 export const app: Express = express();
 
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+  }),
+);
+
 app.use(express.json());
 
+app.use("/auth", authRouter);
 app.use("/counties", countiesRouter);
 app.use("/uats", uatsRouter);
 app.use("/health", healthRouter);

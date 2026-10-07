@@ -8,7 +8,7 @@ export function getAllUats(): Promise<UAT[]> {
   return repository.getAllUats();
 }
 
-export async function getAllUatsByCountyId(countyId: number): Promise<UAT[]> {
+export async function getAllUatsByCountyId(countyId: number) {
   const county = await getCounty(countyId);
 
   if (!county) {

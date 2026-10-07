@@ -1,41 +1,54 @@
-const checkDbConfig = () => {
-  const host = process?.env?.DB_HOST;
-  const port = process?.env?.DB_PORT && Number(process?.env?.DB_PORT);
-  const database = process?.env?.DB_NAME;
-  const username = process?.env?.DB_USERNAME;
-  const password = process?.env?.DB_PASSWORD;
+function requireEnv(
+  name: string,
+  isNumber?: false,
+  checks?: { (x: any): void }[],
+): string;
 
-  if (!host || host.trim() === "") {
-    throw new Error("Missing env variable: DB_HOST");
+function requireEnv(
+  name: string,
+  isNumber: true,
+  checks?: { (x: any): void }[],
+): number;
+
+function requireEnv(
+  name: string,
+  isNumber?: boolean,
+  checks?: { (x: any): void }[],
+): string | number {
+  const env = isNumber
+    ? process.env[name] && Number(process.env[name])
+    : process.env[name];
+
+  if (!env || (!isNumber && env.toString().trim() === "")) {
+    throw new Error(`Missing env variable: ${name}`);
   }
 
-  if (!port) {
-    throw new Error("Missing env variable: DB_PORT");
-  } else if (!Number.isInteger(port) || port < 1 || port > 65535) {
-    throw new Error("DB_PORT must be a number between 1 and 65535");
+  if (checks?.length) {
+    checks.forEach((check) => check(env));
   }
 
-  if (!database || database.trim() === "") {
-    throw new Error("Missing env variable: DB_NAME");
-  }
+  return env;
+}
 
-  if (!username || username.trim() === "") {
-    throw new Error("Missing env variable: DB_USERNAME");
-  }
-
-  if (!password || password.trim() === "") {
-    throw new Error("Missing env variable: DB_PASSWORD");
-  }
-
-  return {
-    db: {
-      host,
-      port,
-      database,
-      username,
-      password,
+const checkDbConfig = () => ({
+  host: requireEnv("DB_HOST"),
+  port: requireEnv("DB_PORT", true, [
+    (x: number) => {
+      if (!Number.isInteger(x) || x < 1 || x > 65535) {
+        throw new Error("DB_PORT must be a number between 1 and 65535");
+      }
     },
-  };
-};
+  ]),
+  database: requireEnv("DB_NAME"),
+  username: requireEnv("DB_USERNAME"),
+  password: requireEnv("DB_PASSWORD"),
+});
 
-export const config = checkDbConfig();
+const checkCognitoConfig = () => ({
+  region: requireEnv("COGNITO_REGION"),
+  userPool: requireEnv("COGNITO_USER_POOL_ID"),
+  client: requireEnv("COGNITO_CLIENT_ID"),
+  clientSecret: requireEnv("COGNITO_CLIENT_SECRET"),
+});
+
+export const config = { db: checkDbConfig(), cognito: checkCognitoConfig() };
