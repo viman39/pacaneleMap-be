@@ -31,8 +31,8 @@ export async function insertCounty(input: CreateCountyInput) {
   }
 }
 
-export async function getAllCounties() {
-  return await prisma.county.findMany({
+export function getAllCounties() {
+  return prisma.county.findMany({
     where: {
       deleted: false,
     },
@@ -54,6 +54,46 @@ export async function getAllCounties() {
           },
         },
       },
+    },
+  });
+}
+
+export function getSlotsStatusTotalsByCounty(countyId?: number) {
+  return prisma.uAT.groupBy({
+    by: ["countyId"],
+    where: countyId
+      ? {
+          deleted: false,
+          county: { deleted: false },
+          countyId: countyId,
+        }
+      : {
+          deleted: false,
+          county: { deleted: false },
+        },
+    _sum: {
+      slotsStatus: true,
+    },
+  });
+}
+
+export function getPopulatedUatsByCounty(countyId?: number) {
+  return prisma.uAT.groupBy({
+    by: ["countyId"],
+    where: countyId
+      ? {
+          deleted: false,
+          population: { gte: 15000 },
+          county: { deleted: false },
+          countyId: countyId,
+        }
+      : {
+          deleted: false,
+          population: { gte: 15000 },
+          county: { deleted: false },
+        },
+    _count: {
+      _all: true,
     },
   });
 }

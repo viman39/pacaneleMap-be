@@ -7,7 +7,7 @@ import {
 } from "./counties.validation.ts";
 import { COUNTY_NOT_FOUND } from "./counties.errors.ts";
 import { getValidationError } from "../../utils/error.utils.ts";
-import { mapCounties, mapCounty } from "./counties.utils.ts";
+import { mapCounty } from "./counties.utils.ts";
 
 export async function getAllCounties(
   _req: Request,
@@ -15,7 +15,7 @@ export async function getAllCounties(
 ): Promise<void> {
   const counties = await countiesService.getAllCounties();
 
-  res.status(200).send(mapCounties(counties));
+  res.status(200).send(counties.map(mapCounty));
   return;
 }
 

@@ -24,3 +24,8 @@ export type UpdateCountyInput = z.infer<typeof updateCountySchema> & {
 
 export type CountiesGetAllResult = Awaited<ReturnType<typeof getAllCounties>>;
 export type CountiesGetByIdResult = Awaited<ReturnType<typeof getCountyById>>;
+
+export type CountyWithStats = CountiesGetByIdResult & {
+  slotsStatusSum: number;
+  uatsOver15000Count: number;
+};

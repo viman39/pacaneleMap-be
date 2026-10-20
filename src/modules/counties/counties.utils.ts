@@ -1,13 +1,6 @@
-import type {
-  CountiesGetAllResult,
-  CountiesGetByIdResult,
-} from "./counties.types.ts";
+import type { CountyWithStats } from "./counties.types.ts";
 
-export const mapCounties = (counties: CountiesGetAllResult) => {
-  return counties.map((c) => mapCounty(c));
-};
-
-export const mapCounty = (c: CountiesGetByIdResult) => ({
+export const mapCounty = (c: CountyWithStats) => ({
   id: c?.id,
   slug: c?.slug,
   code: c?.code,
@@ -17,4 +10,6 @@ export const mapCounty = (c: CountiesGetByIdResult) => ({
   codeX: c?.codeX,
   codeY: c?.codeY,
   uatsCount: c?._count.uats,
+  slotsStatusSum: c?.slotsStatusSum,
+  uatsOver15000Count: c?.uatsOver15000Count,
 });

@@ -1,16 +1,50 @@
-import type { CreateCountyInput, UpdateCountyInput } from "./counties.types.ts";
+import type {
+  CreateCountyInput,
+  CountyWithStats,
+  UpdateCountyInput,
+} from "./counties.types.ts";
 import * as repository from "./counties.repository.ts";
 
 export function createCounty(countyData: CreateCountyInput) {
   return repository.insertCounty(countyData);
 }
 
-export function getAllCounties() {
-  return repository.getAllCounties();
+export async function getAllCounties(): Promise<CountyWithStats[]> {
+  const [counties, slotsTotals, populatedUats] = await Promise.all([
+    repository.getAllCounties(),
+    repository.getSlotsStatusTotalsByCounty(),
+    repository.getPopulatedUatsByCounty(),
+  ]);
+
+  const slotsTotalsByCountyId = new Map(
+    slotsTotals.map((item) => [item.countyId, item._sum.slotsStatus]),
+  );
+
+  const populatedUATSByCountyId = new Map(
+    populatedUats.map((item) => [item.countyId, item._count._all]),
+  );
+
+  return counties.map((county) => ({
+    ...county,
+    slotsStatusSum: slotsTotalsByCountyId.get(county.id) ?? 0,
+    uatsOver15000Count: populatedUATSByCountyId.get(county.id) ?? 0,
+  }));
 }
 
-export function getCounty(id: number) {
-  return repository.getCountyById(id);
+export async function getCounty(id: number): Promise<CountyWithStats | null> {
+  const [county, slotsTotal, populatedUats] = await Promise.all([
+    repository.getCountyById(id),
+    repository.getSlotsStatusTotalsByCounty(id),
+    repository.getPopulatedUatsByCounty(id),
+  ]);
+
+  return county
+    ? {
+        ...county,
+        slotsStatusSum: slotsTotal?.[0]?._sum?.slotsStatus ?? 0,
+        uatsOver15000Count: populatedUats?.[0]?._count?._all ?? 0,
+      }
+    : null;
 }
 
 export function updateCounty(id: number, data: UpdateCountyInput) {
