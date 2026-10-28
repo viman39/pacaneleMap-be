@@ -12,4 +12,5 @@ export const mapCounty = (c: CountyWithStats) => ({
   uatsCount: c?._count.uats,
   slotsStatusSum: c?.slotsStatusSum,
   uatsOver15000Count: c?.uatsOver15000Count,
+  uatsStatus4Count: c?.uatsStatus4Count,
 });

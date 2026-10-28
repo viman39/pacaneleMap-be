@@ -28,4 +28,5 @@ export type CountiesGetByIdResult = Awaited<ReturnType<typeof getCountyById>>;
 export type CountyWithStats = CountiesGetByIdResult & {
   slotsStatusSum: number;
   uatsOver15000Count: number;
+  uatsStatus4Count: number;
 };

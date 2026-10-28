@@ -10,11 +10,14 @@ export function createCounty(countyData: CreateCountyInput) {
 }
 
 export async function getAllCounties(): Promise<CountyWithStats[]> {
-  const [counties, slotsTotals, populatedUats] = await Promise.all([
-    repository.getAllCounties(),
-    repository.getSlotsStatusTotalsByCounty(),
-    repository.getPopulatedUatsByCounty(),
-  ]);
+  const [counties, slotsTotals, populatedUats, slotsPassed] = await Promise.all(
+    [
+      repository.getAllCounties(),
+      repository.getSlotsStatusTotalsByCounty(),
+      repository.getPopulatedUatsByCounty(),
+      repository.getUatsStatusCountByCounty(),
+    ],
+  );
 
   const slotsTotalsByCountyId = new Map(
     slotsTotals.map((item) => [item.countyId, item._sum.slotsStatus]),
@@ -24,18 +27,24 @@ export async function getAllCounties(): Promise<CountyWithStats[]> {
     populatedUats.map((item) => [item.countyId, item._count._all]),
   );
 
+  const slotsPassedByCountyId = new Map(
+    slotsPassed.map((item) => [item.countyId, item._count._all]),
+  );
+
   return counties.map((county) => ({
     ...county,
     slotsStatusSum: slotsTotalsByCountyId.get(county.id) ?? 0,
     uatsOver15000Count: populatedUATSByCountyId.get(county.id) ?? 0,
+    uatsStatus4Count: slotsPassedByCountyId.get(county.id) ?? 0,
   }));
 }
 
 export async function getCounty(id: number): Promise<CountyWithStats | null> {
-  const [county, slotsTotal, populatedUats] = await Promise.all([
+  const [county, slotsTotal, populatedUats, slotsPassed] = await Promise.all([
     repository.getCountyById(id),
     repository.getSlotsStatusTotalsByCounty(id),
     repository.getPopulatedUatsByCounty(id),
+    repository.getUatsStatusCountByCounty(id),
   ]);
 
   return county
@@ -43,6 +52,7 @@ export async function getCounty(id: number): Promise<CountyWithStats | null> {
         ...county,
         slotsStatusSum: slotsTotal?.[0]?._sum?.slotsStatus ?? 0,
         uatsOver15000Count: populatedUats?.[0]?._count?._all ?? 0,
+        uatsStatus4Count: slotsPassed?.[0]?._count?._all ?? 0,
       }
     : null;
 }

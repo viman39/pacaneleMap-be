@@ -98,6 +98,27 @@ export function getPopulatedUatsByCounty(countyId?: number) {
   });
 }
 
+export function getUatsStatusCountByCounty(countyId?: number) {
+  return prisma.uAT.groupBy({
+    by: ["countyId"],
+    where: countyId
+      ? {
+          deleted: false,
+          county: { deleted: false },
+          countyId: countyId,
+          slotsStatus: 4,
+        }
+      : {
+          deleted: false,
+          county: { deleted: false },
+          slotsStatus: 4,
+        },
+    _count: {
+      _all: true,
+    },
+  });
+}
+
 export async function getCountyById(id: number) {
   return await prisma.county.findFirst({
     where: {
